@@ -101,7 +101,8 @@ This value represents how far a reading deviates from normal behavior.
 
 Small values indicate normal operation
 Large deviations indicate potential faults
-Positive and negative values are both meaningful for current analysis
+Positive and negative values are both meaningful for current analysis.
+
 7. Noise Reduction Techniques
 
 Raw sensor data contains noise that can lead to false detections. Two filtering techniques are used:
@@ -170,30 +171,89 @@ Sensor values are not stable across sessions
 Fixed thresholds are ineffective
 Prebuilt datasets have limited real-world applicability
 Adaptive systems provide significantly better reliability
-13. Advantages of the Approach
+
+14. Advantages of the Approach
 No dependency on machine learning models
 Fully real-time and hardware-adaptive
 Robust against noise and transient spikes
 Computationally efficient (runs entirely on ESP32)
 Scalable to additional sensors
-14. Limitations
+
+15. Limitations
 Baseline accuracy depends on correct warmup conditions
 DHT11 has limited precision and slow response
 Long-term degradation tracking is not implemented
-No cloud-based monitoring or logging
-15. Future Improvements
+No cloud-based monitoring or logging.
+
+16. Future Improvements
 
 The current system provides a strong foundation for real-time fault detection. However, several practical enhancements can further improve reliability and usability:
 
-Battery Monitoring Integration
+•Battery Monitoring Integration
 
 Add an additional current sensing mechanism to monitor overall battery consumption. This can be used to estimate remaining charge and trigger alerts or actions when the battery level drops below a safe threshold, ensuring timely recharging and preventing unexpected shutdowns.
 
-Buzzer-Based Alert System
+•Buzzer-Based Alert System
 
 Integrate a buzzer to provide immediate audible feedback during critical fault conditions. This ensures that severe issues are noticeable even without monitoring the dashboard, improving safety and response time.
 
-16. Conclusion
+
+16.SYSTEM ARCHITECTURE DIAGRAM
+______________________________
+                    ┌──────────────────────────────┐
+                    │          Li-Po Battery       │
+                    └──────────────┬───────────────┘
+                                   │
+                          ┌────────▼────────┐
+                          │ Buck Converter  │
+                          └────────┬────────┘
+                                   │
+                          ┌────────▼────────┐
+                          │     ESP32       │
+                          │(Main Controller)│
+                          └───────┬─────────┘
+                                  │
+        ┌───────────────┬──────────┼──────────┬
+        │               │          │          │               
+        ▼               ▼          ▼          ▼               
+ ┌────────────┐  ┌────────────┐  ┌──────────┐  ┌────────────┐
+ │  ACS712    │  │ MPU6050    │  │  DHT11   │  │   L298N    │
+ │ Current    │  │ Vibration  │  │ Temp     │  │Motor Driver│
+ └────┬───────┘  └────┬───────┘  └────┬─────┘  └────┬───────┘
+      │               │               │             │
+      └──────────────┬┴───────────────┴─────────────┘
+                     │
+              ┌──────▼───────┐
+              │   DC Motors  │
+              │ (Left/Right) │
+              └──────────────┘
+
+
+17.SYSTEM FLOWCHART
+___________________
+
+System Start
+     ↓
+Startup Health Check
+     ↓
+Warmup Phase (Baseline Collection)
+     ↓
+Normal Operation Loop:
+    - Read Sensors
+    - Apply Filters
+    - Compute Z-Scores
+    - Calculate Fault Score
+    - Update State Machine
+     ↓
+State Decision:
+    NORMAL / WARNING / FAULT / CRITICAL
+     ↓
+Motor Control Action
+     ↓
+Repeat (~200ms loop)
+
+
+18. Conclusion
 
 This project demonstrates a shift from a traditional machine learning approach to a more practical, adaptive system suitable for embedded environments.
 
