@@ -144,6 +144,48 @@ A fault is only confirmed if abnormal readings **persist across multiple cycles*
 
 ---
 
+## 🌐 Web Dashboard
+
+The ESP32 hosts a real-time monitoring webpage accessible over Wi-Fi.
+
+![Web Dashboard](images/webdashboard_images/warmup.jpg)
+
+## 📸 Fault Detection in Action
+
+### ⚡ Current Fault Triggered
+When motor current exceeds the Z-score threshold, the system escalates the state and throttles the motor.
+
+![Current Fault](images/webdashboard_images/overcurrent.jpg)
+
+### 📳 IMU / Vibration Fault Triggered
+When abnormal vibration is detected by the MPU6050, the system flags a mechanical anomaly.
+
+![IMU Fault](images/webdashboard_images/over_vibration.jpg)
+
+### 📉 Fault Detection — Motors Slowing Down
+
+![Fault Detection](images/webdashboard_images/fault_detected.jpg)
+
+When the system transitions into the **WARNING** or **FAULT** state, the motors are automatically throttled to a reduced speed. This happens when sensor Z-scores exceed the fault threshold consistently across multiple cycles, indicating an overload, blockage, or mechanical abnormality. Slowing the motors reduces stress and prevents further damage while the fault persists.
+
+---
+
+### ⚡ Critical Fault — Sudden Spike
+
+![Critical Fault](images/webdashboard_images/critical_fault.jpg)
+
+A **CRITICAL** state is triggered when an abrupt, high-magnitude spike is detected in current or vibration readings — typically caused by a sudden jam, short circuit, or mechanical impact. The system immediately halts the motors and flags the event on the dashboard, distinguishing it from gradual fault buildup due to its instantaneous nature.
+
+---
+
+### 🛑 Motors Manually Stopped
+
+![Motors Manually Stopped](images/webdashboard_images/motors_manually_stopped.jpg)
+
+The dashboard includes a **manual stop control** that allows the operator to immediately cut motor output regardless of the current system state. When triggered, the system holds the motors at zero speed and logs the event as a manual intervention, separate from any fault-driven stop.
+
+---
+
 ## 🚨 Fault Interpretation
 
 | Fault Type | Likely Cause |
