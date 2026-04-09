@@ -57,12 +57,12 @@ Refer to the [Connection Diagram](images/connection_diagram.jpg) in this reposit
 
 | ESP32 Pin | L298N Pin | Purpose |
 |---|---|---|
-| GPIO 27 | IN1 | Left motor direction |
-| GPIO 26 | IN2 | Left motor direction |
-| GPIO 25 | IN3 | Right motor direction |
-| GPIO 33 | IN4 | Right motor direction |
-| GPIO 32 | ENA (PWM) | Left motor speed |
-| GPIO 14 | ENB (PWM) | Right motor speed |
+| GPIO 26 | IN1 | Left motor direction |
+| GPIO 27 | IN2 | Left motor direction |
+| GPIO 14 | IN3 | Right motor direction |
+| GPIO 12 | IN4 | Right motor direction |
+| GPIO 25 | ENA (PWM) | Left motor speed |
+| GPIO 33 | ENB (PWM) | Right motor speed |
 | GND | GND | Common ground |
 
 ### ESP32 → ACS712 Current Sensor
@@ -159,15 +159,8 @@ Go to `Sketch` → `Include Library` → `Manage Libraries` and search for and i
 | `DHT sensor library` | Adafruit | DHT11 temperature sensor |
 | `Adafruit Unified Sensor` | Adafruit | Dependency for DHT library |
 | `AsyncTCP` | dvarrel | Async TCP for web server |
-| `ESPAsyncWebServer` | Me-No-Dev | Web dashboard server |
-| `ArduinoJson` | Benoit Blanchon | JSON data for dashboard |
 | `Wire` | Built-in | I2C communication (no install needed) |
 
-> ⚠️ **Important:** `ESPAsyncWebServer` and `AsyncTCP` may not appear in the Library Manager. If that happens, download them manually from GitHub and install via `Sketch` → `Include Library` → `Add .ZIP Library`:
-> - [AsyncTCP](https://github.com/dvarrel/AsyncTCP)
-> - [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer)
-
----
 
 ## 6. 📤 Uploading the Code
 
@@ -177,21 +170,16 @@ git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 ```
 Or click **Code → Download ZIP** on GitHub and extract it.
 
-**Step 2** — Open the main `.ino` file in Arduino IDE.
+**Step 2** — Open the `.ino` file in Arduino IDE.The final version of the project code is named as -"robot_maintenance_v4_final.ino" [final working code](codes/working_final_versions/robot_maintenance_v4_final.ino) ,use the code file to work the final prototype.
+[CODE FILE](codes/working_final_versions/robot_maintenance_v4_final.ino)
 
-**Step 3** — Find the Wi-Fi credentials section near the top of the code and update with your network details:
-```cpp
-const char* ssid     = "YOUR_WIFI_NAME";
-const char* password = "YOUR_WIFI_PASSWORD";
-```
+**Step 3** — Connect the ESP32 to your computer via USB.
 
-**Step 4** — Connect the ESP32 to your computer via USB.
+**Step 4** — Select the correct COM port and borad under `Tools` → `Port`.
 
-**Step 5** — Select the correct COM port under `Tools` → `Port`.
+**Step 5** — Click the **Upload** button (→ arrow icon).
 
-**Step 6** — Click the **Upload** button (→ arrow icon).
-
-**Step 7** — Wait for the message:
+**Step 6** — Wait for the message:
 ```
 Done uploading.
 ```
@@ -206,7 +194,7 @@ Done uploading.
 
 **Step 2** — Double-check all wiring one more time before connecting the battery.
 
-**Step 3** — Connect the Li-Po battery.
+**Step 3** — Connect the Li-Po battery and turn on the switch.
 
 **Step 4** — The ESP32 onboard LED should light up and the robot will begin the **warmup phase** automatically.
 
@@ -216,7 +204,7 @@ You should see output similar to:
 ```
 [BOOT] System starting...
 [WIFI] Connecting to network...
-[WIFI] Connected! IP: 192.168.x.x
+[WIFI] Connected! IP: 192.168.4.1
 [WARMUP] Collecting baseline data...
 [WARMUP] Baseline ready. System entering NORMAL state.
 ```
@@ -227,7 +215,7 @@ You should see output similar to:
 
 The warmup phase is **critical** to the system working correctly.
 
-- It runs automatically for the first **~30 seconds** after boot
+- It runs automatically for the first **few seconds** after boot
 - During this time, the robot moves under **normal load conditions**
 - The system records sensor readings and computes the **mean and standard deviation** for current and vibration
 - This becomes the **session baseline** — the reference point for all future fault detection
@@ -242,11 +230,11 @@ The warmup phase is **critical** to the system working correctly.
 
 Once the warmup phase is complete, the dashboard is live.
 
-**Step 1** — Make sure your phone or computer is connected to **the same Wi-Fi network** as the ESP32.
+**Step 1** — Make sure your phone or computer is connected to **Wi-Fi provided from the ESP32**,the wifi name is: **ESP32_ROBOT** and the password is : **12345678**.
 
 **Step 2** — Find the ESP32's IP address from the Serial Monitor output:
 ```
-[WIFI] Connected! IP: 192.168.x.x
+[WIFI] Connected! IP: 192.168.4.1
 ```
 
 **Step 3** — Open a browser and navigate to:
@@ -269,6 +257,7 @@ The dashboard displays the following in real time:
 | Current (A) | Live motor current draw |
 | Vibration Level | MPU6050 vibration intensity |
 | Temperature (°C) | DHT11 ambient reading |
+| Humidity level | DHT11 humidity reading |
 | Fault Score | Weighted anomaly score (0 = normal) |
 | System State | WARMUP / NORMAL / WARNING / FAULT / CRITICAL |
 | Motor Status | Running / Slowed Down / Stopped |
@@ -318,7 +307,7 @@ Release all load and allow the robot to run freely. After a few seconds of susta
 | Upload fails | Wrong COM port or board selected | Recheck Tools → Board and Tools → Port |
 | Upload fails with "Connecting…" stuck | ESP32 not entering flash mode | Hold BOOT button during upload start |
 | Wi-Fi not connecting | Wrong credentials | Double-check ssid and password in code |
-| Dashboard not loading | Different Wi-Fi network or wrong IP | Ensure same network; recheck IP from Serial Monitor |
+| Dashboard not loading | Different Wi-Fi network or wrong IP | Ensure network; recheck IP from Serial Monitor |
 | False faults immediately after warmup | Warmup was disturbed | Reset ESP32 and redo warmup cleanly |
 | No current readings / always 0 | ACS712 wiring issue | Check VCC, GND, and OUT connections |
 | MPU6050 not responding | I2C address conflict or wiring | Verify SDA/SCL pins; check I2C scanner sketch |
