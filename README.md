@@ -324,7 +324,8 @@ Go to `Sketch` → `Include Library` → `Manage Libraries` and install:
 git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 ```
 
-**Step 2** — Open `robot_maintenance_v4_final.ino` from `codes/working_final_versions/` in Arduino IDE.
+**Step 2** — Open `working_code.ino` in Arduino IDE.
+[code file](working_code.ino).it is the final code for the prototype.
 
 **Step 3** — Connect the ESP32 via USB, select the correct board and port under `Tools`.
 
@@ -355,12 +356,12 @@ The warmup phase is **critical** to the system working correctly.
 - **Password:** `12345678`
 - turn off the mobile data of your smartphone for working...
 
-**Step 2** — Find the ESP32's IP from the Serial Monitor:
+**Step 2** —if robot connected through usb: Find the ESP32's IP from the Serial Monitor:
 ```
 [WIFI] Connected! IP: 192.168.4.1
 ```
 
-**Step 3** — Open a browser and go to `http://192.168.x.x`
+**Step 3** — Open a browser and go to `http://192.168.4.1`
 
 ---
 
