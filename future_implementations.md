@@ -13,6 +13,8 @@ This document outlines potential improvements and extensions for anyone looking 
 5. [OLED Display on Robot](#5--oled-display-on-robot)
 6. [Camera-Based Visual Fault Detection](#6--camera-based-visual-fault-detection)
 
+<img width="720" height="1280" alt="Image" src="https://github.com/user-attachments/assets/405d0577-3ebd-4712-85b1-1888a2f05e0b" />
+
 ---
 
 ## 1. ☁️ Cloud-Based Monitoring & Logging
