@@ -272,7 +272,7 @@ Integrate a buzzer to provide immediate audible feedback during critical fault c
 
 ## 🔌 Connection Diagram
 
-![Connection Diagram](connection_diagram1.jpg)
+![Connection Diagram](connection_diagram1.png)
 
 ---
 
