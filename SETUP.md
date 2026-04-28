@@ -113,7 +113,7 @@ Go to **Tools → Manage Libraries** and install each of the following:
 
 1. In Arduino IDE, go to **File → Open**
 2. Navigate to the `codes/` folder in this repository
-3. Open the [code file](codes/working_final_versions/robot_maintenance_v4_final.ino).it is the final version of the prototype working code.
+3. Open the [code file](working_code.ino).it is the final version of the prototype working code.
 
 ---
 
