@@ -348,7 +348,7 @@ String buildDashboard() {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@400;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#090d14;color:#b8ccd8;font-family:'Exo 2',sans-serif;min-height:100vh;padding:14px;max-width:460px;margin:auto}
+body{background:#090d14;color:#b8ccd8;font-family:'Exo 2',sans-serif;height:100vh;overflow:hidden;padding:14px;max-width:460px;margin:auto}
 h1{font-family:'Share Tech Mono',monospace;color:#00ccff;font-size:1.1rem;letter-spacing:3px;text-align:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #1a2a3a}
 .sb{display:flex;justify-content:space-between;align-items:center;background:#0f1820;border:1px solid #1e3a5f;border-radius:8px;padding:10px 14px;margin-bottom:10px}
 .badge{font-family:'Share Tech Mono',monospace;font-size:0.88rem;font-weight:bold;padding:5px 12px;border-radius:4px;border:2px solid )"+sc+R"(;color:)"+sc+R"(}
@@ -387,7 +387,21 @@ h1{font-family:'Share Tech Mono',monospace;color:#00ccff;font-size:1.1rem;letter
   <div style='text-align:right'><div style='font-size:0.56rem;color:#446688'>FAULT SCORE</div>
   <div style='font-family:Share Tech Mono,monospace;font-size:1.2rem;color:#ffcc44'>)"+String(lastScore,2)+R"(</div></div>
 </div>
-<div class='grid'>
+)";
+  page+="<div class='ws'>";
+  if(inWarmup){
+    int pct=baseRaw.progress();
+    page+="<div style='font-size:0.75rem;color:#4499ff;margin-bottom:6px'>&#9654; Collecting baseline... <b>"+String(pct)+"%</b></div>"
+          "<div class='wb'><div class='wf' style='width:"+String(pct)+"%'></div></div>"
+          "<div style='font-size:0.6rem;color:#446688;margin-top:6px'>Run robot normally during warmup. Motors are active.</div>";
+  } else {
+    if(motorState==STATE_NORMAL)
+      page+="<div style='font-size:0.6rem;color:#446688;margin-bottom:6px'>Auto re-warmup in <b>"+String(rem)+"s</b> (NORMAL state only)</div>";
+    page+="<div style='font-size:0.66rem;color:#446688;margin-bottom:8px'>&#9432; Warmup only in normal condition — not during faults.</div>"
+          "<a href='/warmup'><button class='btn-blue'>&#9664; Manual Re-Warmup</button></a>";
+  }
+  page+="</div>";
+  page+=R"(<div class='grid'>
   <div class='card'><div class='lbl'>Current</div><div class='val'>)"+String((int)lastRaw)+R"(</div><div class='base'>base )"+String(baseRaw.mean,0)+R"(</div></div>
   <div class='card'><div class='lbl'>Vibration</div><div class='val'>)"+String(lastVib,2)+R"(</div><div class='base'>avg )"+String(lastVibSmooth,2)+R"( | base )"+String(baseVib.mean,2)+R"(</div></div>
   <div class='card'><div class='lbl'>Temp &deg;C</div><div class='val'>)"+String(lastTemp,1)+R"(</div><div class='base'>base )"+String(baseTemp.mean,1)+R"(</div></div>
@@ -455,19 +469,7 @@ h1{font-family:'Share Tech Mono',monospace;color:#00ccff;font-size:1.1rem;letter
           "&#9673; Humidity: "+String(lastHumidity,1)+"%</div>";
   }
 
-  page+="<div class='ws'>";
-  if(inWarmup){
-    int pct=baseRaw.progress();
-    page+="<div style='font-size:0.75rem;color:#4499ff;margin-bottom:6px'>&#9654; Collecting baseline... <b>"+String(pct)+"%</b></div>"
-          "<div class='wb'><div class='wf' style='width:"+String(pct)+"%'></div></div>"
-          "<div style='font-size:0.6rem;color:#446688;margin-top:6px'>Run robot normally during warmup. Motors are active.</div>";
-  } else {
-    if(motorState==STATE_NORMAL)
-      page+="<div style='font-size:0.6rem;color:#446688;margin-bottom:6px'>Auto re-warmup in <b>"+String(rem)+"s</b> (NORMAL state only)</div>";
-    page+="<div style='font-size:0.66rem;color:#446688;margin-bottom:8px'>&#9432; Warmup only in normal condition — not during faults.</div>"
-          "<a href='/warmup'><button class='btn-blue'>&#9664; Manual Re-Warmup</button></a>";
-  }
-  page+="</div>";
+
   page+="<div class='footer'>Auto-refresh 2s &nbsp;|&nbsp; "+WiFi.softAPIP().toString()+"</div>";
   page+="</body></html>";
   return page;

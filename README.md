@@ -1,7 +1,7 @@
 # 🤖 Predictive Maintenance Robot
 ### ESP32-Based Multi-Sensor Fault Detection System
 
-![Prototype](images/prototype.jpg)
+![Prototype](images/robot_image.png)
 ---
 
 ## 📌 Introduction
@@ -146,43 +146,22 @@ A fault is only confirmed if abnormal readings **persist across multiple cycles*
 
 ## 🌐 Web Dashboard
 
-The ESP32 hosts a real-time monitoring webpage accessible over Wi-Fi.
+![webpage images](images/webdashboard_images/webpage.jpg)
 
-![Web Dashboard](images/webdashboard_images/warmup.jpg)
+# 🚨 Real-Time Fault Detection Demonstrations
+## 📳 Vibration Fault Detection
 
-## 📸 Fault Detection in Action
 
-### ⚡ Current Fault Triggered
-When motor current exceeds the Z-score threshold, the system escalates the state and throttles the motor.
+## ⚡️ Multi-Sensor Fault Detection
 
-![Current Fault](images/webdashboard_images/overcurrent.jpg)
 
-### 📳 IMU / Vibration Fault Triggered
-When abnormal vibration is detected by the MPU6050, the system flags a mechanical anomaly.
+## 🔥 Overcurrent Fault Detection
 
-![IMU Fault](images/webdashboard_images/over_vibration.jpg)
 
-### 📉 Fault Detection — Motors Slowing Down
 
-![Fault Detection](images/webdashboard_images/fault_detected.jpg)
+## ⚠️ Obstacle-Induced Fault Detection
 
-When the system transitions into the **WARNING** or **FAULT** state, the motors are automatically throttled to a reduced speed. This happens when sensor Z-scores exceed the fault threshold consistently across multiple cycles, indicating an overload, blockage, or mechanical abnormality. Slowing the motors reduces stress and prevents further damage while the fault persists.
 
----
-
-### ⚡ Critical Fault — Sudden Spike
-
-![Critical Fault](images/webdashboard_images/critical_fault.jpg)
-
-A **CRITICAL** state is triggered when an abrupt, high-magnitude spike is detected in current or vibration readings — typically caused by a sudden jam, short circuit, or mechanical impact. The system immediately halts the motors and flags the event on the dashboard, distinguishing it from gradual fault buildup due to its instantaneous nature.
-
----
-
-### 🛑 Motors Manually Stopped
-
-![Motors Manually Stopped](images/webdashboard_images/motors_manually_stopped.jpg)
-
-The dashboard includes a **manual stop control** that allows the operator to immediately cut motor output regardless of the current system state. When triggered, the system holds the motors at zero speed and logs the event as a manual intervention, separate from any fault-driven stop.
 
 ---
 
@@ -217,6 +196,240 @@ Sensor Data Acquisition
         ↓
  Motor Control Action
 ```
+
+---
+
+## 🚀 Getting Started
+
+### 🛒 What You Need
+
+#### Hardware
+
+| Component | Quantity | Notes |
+|---|---|---|
+| ESP32 Development Board | 1 | Any 38-pin ESP32 dev board works |
+| L298N Motor Driver | 1 | — |
+| 2WD Robot Chassis with DC Motors | 1 | Comes with wheels and motor mounts |
+| ACS712 Current Sensor | 1 | 5A or 20A version |
+| MPU6050 Accelerometer/Gyroscope | 1 | GY-521 module recommended |
+| DHT11 Temperature Sensor | 1 | With pull-up resistor on board preferred |
+| Buck Converter | 1 | Set to output 5V |
+| Li-Po Battery | 1 | 7.4V 2S recommended |
+| Jumper Wires | Several | Male-to-male and male-to-female |
+| Breadboard | 1 | For prototyping connections |
+| USB Cable (Micro or USB-C) | 1 | Matching your ESP32 board |
+
+#### Software
+
+- Arduino IDE (version 2.x recommended)
+- Web browser (Chrome or Firefox) for the dashboard
+
+---
+
+### 🔌 Wiring & Hardware Assembly
+
+> ⚠️ **Do all wiring with the battery disconnected. Double-check every connection before powering on.**
+
+Refer to the [Connection Diagram](connection_diagram1.png) for the full visual reference.
+
+#### ESP32 → L298N Motor Driver
+
+| ESP32 Pin | L298N Pin | Purpose |
+|---|---|---|
+| GPIO 26 | IN1 | Left motor direction |
+| GPIO 27 | IN2 | Left motor direction |
+| GPIO 14 | IN3 | Right motor direction |
+| GPIO 12 | IN4 | Right motor direction |
+| GPIO 25 | ENA (PWM) | Left motor speed |
+| GPIO 33 | ENB (PWM) | Right motor speed |
+| GND | GND | Common ground |
+
+#### ESP32 → ACS712 Current Sensor
+
+| ESP32 Pin | ACS712 Pin | Purpose |
+|---|---|---|
+| 3.3V | VCC | Power |
+| GND | GND | Ground |
+| GPIO 34 (ADC) | OUT | Analog current reading |
+
+#### ESP32 → MPU6050
+
+| ESP32 Pin | MPU6050 Pin | Purpose |
+|---|---|---|
+| 3.3V | VCC | Power |
+| GND | GND | Ground |
+| GPIO 21 | SDA | I2C Data |
+| GPIO 22 | SCL | I2C Clock |
+
+#### ESP32 → DHT11
+
+| ESP32 Pin | DHT11 Pin | Purpose |
+|---|---|---|
+| 3.3V | VCC | Power |
+| GND | GND | Ground |
+| GPIO 4 | DATA | Temperature/Humidity |
+
+#### Power Distribution
+
+- Li-Po battery → Buck converter input
+- Buck converter output (5V) → L298N 5V pin (logic power) and ESP32 VIN
+- L298N 12V pin → Li-Po battery positive (motor power)
+- All GND pins must share a **common ground**
+
+> 💡 **Tip:** The ESP32 runs on 3.3V logic internally but the VIN pin accepts 5V. Always power sensors with 3.3V from the ESP32 unless the sensor specifically requires 5V.
+
+---
+
+### ⚙️ Setting Up Arduino IDE for ESP32
+
+**Step 1** — Open Arduino IDE and go to `File` → `Preferences`
+
+**Step 2** — In the **"Additional Boards Manager URLs"** field, paste:
+```
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+```
+
+**Step 3** — Go to `Tools` → `Board` → `Boards Manager`, search for `esp32`, and install the package by **Espressif Systems**.
+
+**Step 4** — Select your board: `Tools` → `Board` → `ESP32 Arduino` → `ESP32 Dev Module`
+
+**Step 5** — Set upload settings:
+
+| Setting | Value |
+|---|---|
+| Upload Speed | 115200 |
+| CPU Frequency | 240MHz |
+| Flash Size | 4MB |
+| Partition Scheme | Default 4MB |
+| Port | COMx (Windows) or /dev/ttyUSBx (Linux/Mac) |
+
+Also install the **CP2102 or CH340 USB driver** for your ESP32 board to be recognized by your computer.
+
+---
+
+### 📦 Installing Required Libraries
+
+Go to `Sketch` → `Include Library` → `Manage Libraries` and install:
+
+| Library | Author | Purpose |
+|---|---|---|
+| `MPU6050` | Electronic Cats or Jeff Rowberg | Accelerometer/Gyroscope |
+| `DHT sensor library` | Adafruit | DHT11 temperature sensor |
+| `Adafruit Unified Sensor` | Adafruit | Dependency for DHT library |
+| `AsyncTCP` | dvarrel | Async TCP for web server |
+| `Wire` | Built-in | I2C communication (no install needed) |
+
+---
+
+### 📤 Uploading the Code
+
+**Step 1** — Clone or download this repository:
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+```
+
+**Step 2** — Open `robot_maintenance_v4_final.ino` from `codes/working_final_versions/` in Arduino IDE.
+
+**Step 3** — Connect the ESP32 via USB, select the correct board and port under `Tools`.
+
+**Step 4** — Click the **Upload** button (→ arrow icon) and wait for `Done uploading.`
+
+> ⚠️ If upload fails with "Connecting…" stuck, hold the **BOOT button** on the ESP32 while the upload starts, then release once you see "Connecting…"
+
+---
+
+### ⏱️ Understanding the Warmup Phase
+
+The warmup phase is **critical** to the system working correctly.
+
+- Runs automatically for the first few seconds after boot
+- The robot moves under **normal load conditions** during this time
+- The system computes the **mean and standard deviation** for current and vibration as the session baseline
+
+> ⚠️ **Do not block the wheels, apply extra load, or disturb the robot during warmup.** Any abnormal condition will skew the baseline and cause false detections for the entire session.
+
+> 💡 If warmup was disrupted, press the **EN/RST button** to restart a fresh warmup.
+
+---
+
+### 🌐 Accessing the Web Dashboard
+
+**Step 1** — Connect your phone or computer to the ESP32's Wi-Fi:
+- **SSID:** `ESP32_ROBOT`
+- **Password:** `12345678`
+- turn off the mobile data of your smartphone for working...
+
+**Step 2** — Find the ESP32's IP from the Serial Monitor:
+```
+[WIFI] Connected! IP: 192.168.4.1
+```
+
+**Step 3** — Open a browser and go to `http://192.168.x.x`
+
+---
+
+### 📊 Reading the Dashboard
+
+| Display Element | What It Means |
+|---|---|
+| Current (A) | Live motor current draw |
+| Vibration Level | MPU6050 vibration intensity |
+| Temperature (°C) | DHT11 ambient reading |
+| Humidity level | DHT11 humidity reading |
+| Fault Score | Weighted anomaly score (0 = normal) |
+| System State | WARMUP / NORMAL / WARNING / FAULT / CRITICAL |
+| Motor Status | Running / Slowed Down / Stopped |
+
+**System State Meanings:**
+- 🟢 **NORMAL** — All readings within baseline range. Motors at full speed.
+- 🟡 **WARNING** — Minor deviation detected. System monitoring closely.
+- 🟠 **FAULT DETECTED** — Significant anomaly confirmed. Motors automatically slow down.
+- 🔴 **CRITICAL FAULT** — Sudden spike detected. Motors halted immediately.
+- ⛔ **MOTORS MANUALLY STOPPED** — User stopped motors via dashboard.
+
+---
+
+### 🧪 Testing Fault Detection
+
+**Test 1 — Fault Detection (Motor Slowdown)**
+Gently press down on the chassis to increase wheel load. Expect: current rise → fault score increase → **FAULT** state → motors slow down.
+
+**Test 2 — Critical Fault (Sudden Spike)**
+Abruptly block both wheels for 1–2 seconds. Expect: sudden spike in current and vibration → **CRITICAL** state → motors stop.
+
+**Test 3 — Manual Stop**
+Click **Stop Motors** on the dashboard during any fault. Expect: motors stop immediately, dashboard shows **MOTORS MANUALLY STOPPED**.
+
+**Test 4 — Recovery**
+Release all load and let the robot run freely. After sustained normal readings, the system transitions back to **NORMAL** state.
+
+---
+
+### 🔧 Troubleshooting
+
+| Problem | Likely Cause | Fix |
+|---|---|---|
+| ESP32 not detected by PC | Missing USB driver | Install CP2102 or CH340 driver |
+| Upload fails | Wrong COM port or board | Recheck Tools → Board and Tools → Port |
+| Upload fails with "Connecting…" stuck | Not entering flash mode | Hold BOOT button during upload start |
+| Wi-Fi not connecting | Wrong credentials | Double-check ssid and password in code |
+| Dashboard not loading | Wrong network or IP | Ensure correct Wi-Fi; recheck IP from Serial Monitor |
+| False faults after warmup | Warmup was disturbed | Reset ESP32 and redo warmup cleanly |
+| No current readings / always 0 | ACS712 wiring issue | Check VCC, GND, and OUT connections |
+| MPU6050 not responding | I2C wiring issue | Verify SDA/SCL pins; run I2C scanner sketch |
+| DHT11 shows -1 or NaN | Bad data pin or no pull-up | Check DATA pin; add 10kΩ pull-up resistor if needed |
+| Motors not moving | L298N not powered or wrong pins | Check motor driver wiring and PWM pin assignments |
+
+---
+
+### 📌 Important Notes & Tips
+
+- 🔁 **Always reset before a new session.** The baseline is session-specific and does not persist after power off.
+- 🔋 **Monitor battery voltage.** A low battery causes inconsistent current readings and false detections.
+- 🌡️ **DHT11 has a 1–2 second response delay.** It is used for long-term trend monitoring only.
+- ⚡ **Never connect the Li-Po battery in reverse polarity.**
+- 🧰 **Verify buck converter output is exactly 5V** with a multimeter before connecting to the ESP32.
+- 💾 **Do not modify the baseline computation** section unless you fully understand the implications.
 
 ---
 
@@ -272,7 +485,7 @@ Integrate a buzzer to provide immediate audible feedback during critical fault c
 
 ## 🔌 Connection Diagram
 
-![Connection Diagram](images/connection_diagram.jpg)
+![Connection Diagram](connection_diagram1.png)
 
 ---
 
