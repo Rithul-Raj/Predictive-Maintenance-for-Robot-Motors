@@ -11,7 +11,6 @@ This document outlines potential improvements and extensions for anyone looking 
 3. [Buzzer-Based Alert System](#3--buzzer-based-alert-system)
 4. [Mobile App Integration](#4--mobile-app-integration)
 5. [OLED Display on Robot](#5--oled-display-on-robot)
-6. [Camera-Based Visual Fault Detection](#6--camera-based-visual-fault-detection)
 
 ---
 
@@ -112,23 +111,6 @@ Gives instant on-device feedback during testing or demos without needing a phone
 `SSD1306 OLED` `Adafruit SSD1306 Library` `I2C`
 
 ---
-
-## 6. 📷 Camera-Based Visual Fault Detection
-
-### What it is
-Add a camera module to the robot to visually inspect its surroundings and detect physical faults like loose wires, smoke, or obstacles.
-
-### Why it is useful
-Sensor data alone cannot detect everything. A camera adds a visual layer of fault detection and also enables remote visual inspection via the dashboard.
-
-### How to implement
-- Use the **ESP32-CAM** module (has a built-in camera)
-- Stream live video to the web dashboard
-- Use basic image processing to detect smoke or unusual color changes
-- For advanced use, run a lightweight object detection model using **TensorFlow Lite**
-
-### Suggested Tools
-`ESP32-CAM` `TensorFlow Lite` `OpenCV` `MJPEG Streaming`
 
 ---
 
