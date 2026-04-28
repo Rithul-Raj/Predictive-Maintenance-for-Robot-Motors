@@ -1,7 +1,7 @@
 # 🤖 Predictive Maintenance Robot
 ### ESP32-Based Multi-Sensor Fault Detection System
 
-<img width="300" height="500" alt="Image" src="https://github.com/user-attachments/assets/6ac4218d-5333-47ae-b34a-53b6d51c09ba" />
+<img width="360" height="400" alt="Image" src="https://github.com/user-attachments/assets/6ac4218d-5333-47ae-b34a-53b6d51c09ba" />
 ---
 
 ## 📌 Introduction
