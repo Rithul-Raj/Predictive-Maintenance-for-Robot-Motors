@@ -470,19 +470,19 @@ Integrate a buzzer to provide immediate audible feedback during critical fault c
 
 ## 📐 System Architecture Diagram
 
-![System Architecture](images/mermaid-diagram.png)
+<img width="550" height="300" alt="Image" src="https://github.com/user-attachments/assets/8e8a5f0e-caf7-4d2b-b8f2-b91c8e28f1e9" />
 
 ---
 
 ## 📊 System Flowchart
 
-![System Flowchart](images/flowchart.png)
+<img width="450" height="550" alt="Image" src="https://github.com/user-attachments/assets/397fff49-ae94-4b75-8ea8-d50a6289e32e" />
 
 ---
 
 ## 🔌 Connection Diagram
 
-![Connection Diagram](connection_diagram1.png)
+<img width="400" height="550" alt="Image" src="https://github.com/user-attachments/assets/9c45444d-15c7-41b1-8f6d-e517c30a2f96" />
 
 ---
 
