@@ -146,21 +146,8 @@ A fault is only confirmed if abnormal readings **persist across multiple cycles*
 
 ## 🌐 Web Dashboard
 
-![webpage images](images/webdashboard_images/webpage.png)
+![webpage images](images/webdashboard_images/webpage.jpg)
 
-### ⚡ Critical Fault — Sudden Spike
-
-![Critical Fault](images/webdashboard_images/critical_fault.jpg)
-
-A **CRITICAL** state is triggered when an abrupt, high-magnitude spike is detected in current or vibration readings — typically caused by a sudden jam, short circuit, or mechanical impact. The system immediately halts the motors and flags the event on the dashboard, distinguishing it from gradual fault buildup due to its instantaneous nature.
-
----
-
-### 🛑 Motors Manually Stopped
-
-![Motors Manually Stopped](images/webdashboard_images/motors_manually_stopped.jpg)
-
-The dashboard includes a **manual stop control** that allows the operator to immediately cut motor output regardless of the current system state. When triggered, the system holds the motors at zero speed and logs the event as a manual intervention, separate from any fault-driven stop.
 
 ---
 
