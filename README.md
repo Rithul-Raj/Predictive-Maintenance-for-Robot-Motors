@@ -146,29 +146,7 @@ A fault is only confirmed if abnormal readings **persist across multiple cycles*
 
 ## 🌐 Web Dashboard
 
-The ESP32 hosts a real-time monitoring webpage accessible over Wi-Fi.
-
-![Web Dashboard](images/webdashboard_images/warmup.jpg)
-
-## 📸 Fault Detection in Action
-
-### ⚡ Current Fault Triggered
-When motor current exceeds the Z-score threshold, the system escalates the state and throttles the motor.
-
-![Current Fault](images/webdashboard_images/overcurrent.jpg)
-
-### 📳 IMU / Vibration Fault Triggered
-When abnormal vibration is detected by the MPU6050, the system flags a mechanical anomaly.
-
-![IMU Fault](images/webdashboard_images/over_vibration.jpg)
-
-### 📉 Fault Detection — Motors Slowing Down
-
-![Fault Detection](images/webdashboard_images/fault_detected.jpg)
-
-When the system transitions into the **WARNING** or **FAULT** state, the motors are automatically throttled to a reduced speed. This happens when sensor Z-scores exceed the fault threshold consistently across multiple cycles, indicating an overload, blockage, or mechanical abnormality. Slowing the motors reduces stress and prevents further damage while the fault persists.
-
----
+![webpage images](images/webdashboard_images/webpage.png)
 
 ### ⚡ Critical Fault — Sudden Spike
 
