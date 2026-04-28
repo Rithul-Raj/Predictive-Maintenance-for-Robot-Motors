@@ -1,7 +1,7 @@
 # 🤖 Predictive Maintenance Robot
 ### ESP32-Based Multi-Sensor Fault Detection System
 
-![Prototype](images/prototype.jpg)
+![Prototype](images/robot_image.png)
 ---
 
 ## 📌 Introduction
@@ -251,7 +251,7 @@ Sensor Data Acquisition
 
 > ⚠️ **Do all wiring with the battery disconnected. Double-check every connection before powering on.**
 
-Refer to the [Connection Diagram](images/connection_diagram.jpg) for the full visual reference.
+Refer to the [Connection Diagram](connection_diagram1.png) for the full visual reference.
 
 #### ESP32 → L298N Motor Driver
 
@@ -505,7 +505,7 @@ Integrate a buzzer to provide immediate audible feedback during critical fault c
 
 ## 🔌 Connection Diagram
 
-![Connection Diagram](images/connection_diagram.jpg)
+![Connection Diagram](connection_diagram1.png)
 
 ---
 
