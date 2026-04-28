@@ -160,7 +160,7 @@ A fault is only confirmed if abnormal readings **persist across multiple cycles*
 ![gif3](images/Blockage.gif.mp4)
 
 ## ⚠️ Obstacle-Induced Fault Detection
-![gif4](images/Obstacle.gif.mp4)
+![gif4](images/Obstacle.mp4)
 
 
 ---
