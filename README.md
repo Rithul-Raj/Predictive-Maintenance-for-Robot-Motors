@@ -150,17 +150,13 @@ A fault is only confirmed if abnormal readings **persist across multiple cycles*
 
 # 🚨 Real-Time Fault Detection Demonstrations
 ## 📳 Vibration Fault Detection
-
+<img width="250" height="400" alt="Image" src="https://github.com/user-attachments/assets/8be80169-5849-4617-a01a-b50245343cab" />
 
 ## ⚡️ Multi-Sensor Fault Detection
-
-
-## 🔥 Overcurrent Fault Detection
-
-
+<img width="250" height="400" alt="Image" src="https://github.com/user-attachments/assets/c909f5a5-79d7-4394-a47a-e853291fa1ed" />
 
 ## ⚠️ Obstacle-Induced Fault Detection
-
+<img width="250" height="400" alt="Image" src="https://github.com/user-attachments/assets/95ba102b-3034-4a4f-9737-54243fc86ba8" />
 
 
 ---
