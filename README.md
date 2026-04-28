@@ -378,6 +378,7 @@ The warmup phase is **critical** to the system working correctly.
 **Step 1** — Connect your phone or computer to the ESP32's Wi-Fi:
 - **SSID:** `ESP32_ROBOT`
 - **Password:** `12345678`
+- turn off the mobile data of your smartphone for working...
 
 **Step 2** — Find the ESP32's IP from the Serial Monitor:
 ```
