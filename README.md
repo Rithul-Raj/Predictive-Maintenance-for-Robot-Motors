@@ -1,7 +1,7 @@
 # 🤖 Predictive Maintenance Robot
 ### ESP32-Based Multi-Sensor Fault Detection System
 
-![Prototype](images/robot_image.png)
+![Prototype](images/prototype.jpg)
 ---
 
 ## 📌 Introduction
@@ -220,6 +220,239 @@ Sensor Data Acquisition
 
 ---
 
+## 🚀 Getting Started
+
+### 🛒 What You Need
+
+#### Hardware
+
+| Component | Quantity | Notes |
+|---|---|---|
+| ESP32 Development Board | 1 | Any 38-pin ESP32 dev board works |
+| L298N Motor Driver | 1 | — |
+| 2WD Robot Chassis with DC Motors | 1 | Comes with wheels and motor mounts |
+| ACS712 Current Sensor | 1 | 5A or 20A version |
+| MPU6050 Accelerometer/Gyroscope | 1 | GY-521 module recommended |
+| DHT11 Temperature Sensor | 1 | With pull-up resistor on board preferred |
+| Buck Converter | 1 | Set to output 5V |
+| Li-Po Battery | 1 | 7.4V 2S recommended |
+| Jumper Wires | Several | Male-to-male and male-to-female |
+| Breadboard | 1 | For prototyping connections |
+| USB Cable (Micro or USB-C) | 1 | Matching your ESP32 board |
+
+#### Software
+
+- Arduino IDE (version 2.x recommended)
+- Web browser (Chrome or Firefox) for the dashboard
+
+---
+
+### 🔌 Wiring & Hardware Assembly
+
+> ⚠️ **Do all wiring with the battery disconnected. Double-check every connection before powering on.**
+
+Refer to the [Connection Diagram](images/connection_diagram.jpg) for the full visual reference.
+
+#### ESP32 → L298N Motor Driver
+
+| ESP32 Pin | L298N Pin | Purpose |
+|---|---|---|
+| GPIO 26 | IN1 | Left motor direction |
+| GPIO 27 | IN2 | Left motor direction |
+| GPIO 14 | IN3 | Right motor direction |
+| GPIO 12 | IN4 | Right motor direction |
+| GPIO 25 | ENA (PWM) | Left motor speed |
+| GPIO 33 | ENB (PWM) | Right motor speed |
+| GND | GND | Common ground |
+
+#### ESP32 → ACS712 Current Sensor
+
+| ESP32 Pin | ACS712 Pin | Purpose |
+|---|---|---|
+| 3.3V | VCC | Power |
+| GND | GND | Ground |
+| GPIO 34 (ADC) | OUT | Analog current reading |
+
+#### ESP32 → MPU6050
+
+| ESP32 Pin | MPU6050 Pin | Purpose |
+|---|---|---|
+| 3.3V | VCC | Power |
+| GND | GND | Ground |
+| GPIO 21 | SDA | I2C Data |
+| GPIO 22 | SCL | I2C Clock |
+
+#### ESP32 → DHT11
+
+| ESP32 Pin | DHT11 Pin | Purpose |
+|---|---|---|
+| 3.3V | VCC | Power |
+| GND | GND | Ground |
+| GPIO 4 | DATA | Temperature/Humidity |
+
+#### Power Distribution
+
+- Li-Po battery → Buck converter input
+- Buck converter output (5V) → L298N 5V pin (logic power) and ESP32 VIN
+- L298N 12V pin → Li-Po battery positive (motor power)
+- All GND pins must share a **common ground**
+
+> 💡 **Tip:** The ESP32 runs on 3.3V logic internally but the VIN pin accepts 5V. Always power sensors with 3.3V from the ESP32 unless the sensor specifically requires 5V.
+
+---
+
+### ⚙️ Setting Up Arduino IDE for ESP32
+
+**Step 1** — Open Arduino IDE and go to `File` → `Preferences`
+
+**Step 2** — In the **"Additional Boards Manager URLs"** field, paste:
+```
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+```
+
+**Step 3** — Go to `Tools` → `Board` → `Boards Manager`, search for `esp32`, and install the package by **Espressif Systems**.
+
+**Step 4** — Select your board: `Tools` → `Board` → `ESP32 Arduino` → `ESP32 Dev Module`
+
+**Step 5** — Set upload settings:
+
+| Setting | Value |
+|---|---|
+| Upload Speed | 115200 |
+| CPU Frequency | 240MHz |
+| Flash Size | 4MB |
+| Partition Scheme | Default 4MB |
+| Port | COMx (Windows) or /dev/ttyUSBx (Linux/Mac) |
+
+Also install the **CP2102 or CH340 USB driver** for your ESP32 board to be recognized by your computer.
+
+---
+
+### 📦 Installing Required Libraries
+
+Go to `Sketch` → `Include Library` → `Manage Libraries` and install:
+
+| Library | Author | Purpose |
+|---|---|---|
+| `MPU6050` | Electronic Cats or Jeff Rowberg | Accelerometer/Gyroscope |
+| `DHT sensor library` | Adafruit | DHT11 temperature sensor |
+| `Adafruit Unified Sensor` | Adafruit | Dependency for DHT library |
+| `AsyncTCP` | dvarrel | Async TCP for web server |
+| `Wire` | Built-in | I2C communication (no install needed) |
+
+---
+
+### 📤 Uploading the Code
+
+**Step 1** — Clone or download this repository:
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+```
+
+**Step 2** — Open `robot_maintenance_v4_final.ino` from `codes/working_final_versions/` in Arduino IDE.
+
+**Step 3** — Connect the ESP32 via USB, select the correct board and port under `Tools`.
+
+**Step 4** — Click the **Upload** button (→ arrow icon) and wait for `Done uploading.`
+
+> ⚠️ If upload fails with "Connecting…" stuck, hold the **BOOT button** on the ESP32 while the upload starts, then release once you see "Connecting…"
+
+---
+
+### ⏱️ Understanding the Warmup Phase
+
+The warmup phase is **critical** to the system working correctly.
+
+- Runs automatically for the first few seconds after boot
+- The robot moves under **normal load conditions** during this time
+- The system computes the **mean and standard deviation** for current and vibration as the session baseline
+
+> ⚠️ **Do not block the wheels, apply extra load, or disturb the robot during warmup.** Any abnormal condition will skew the baseline and cause false detections for the entire session.
+
+> 💡 If warmup was disrupted, press the **EN/RST button** to restart a fresh warmup.
+
+---
+
+### 🌐 Accessing the Web Dashboard
+
+**Step 1** — Connect your phone or computer to the ESP32's Wi-Fi:
+- **SSID:** `ESP32_ROBOT`
+- **Password:** `12345678`
+
+**Step 2** — Find the ESP32's IP from the Serial Monitor:
+```
+[WIFI] Connected! IP: 192.168.4.1
+```
+
+**Step 3** — Open a browser and go to `http://192.168.x.x`
+
+---
+
+### 📊 Reading the Dashboard
+
+| Display Element | What It Means |
+|---|---|
+| Current (A) | Live motor current draw |
+| Vibration Level | MPU6050 vibration intensity |
+| Temperature (°C) | DHT11 ambient reading |
+| Humidity level | DHT11 humidity reading |
+| Fault Score | Weighted anomaly score (0 = normal) |
+| System State | WARMUP / NORMAL / WARNING / FAULT / CRITICAL |
+| Motor Status | Running / Slowed Down / Stopped |
+
+**System State Meanings:**
+- 🟢 **NORMAL** — All readings within baseline range. Motors at full speed.
+- 🟡 **WARNING** — Minor deviation detected. System monitoring closely.
+- 🟠 **FAULT DETECTED** — Significant anomaly confirmed. Motors automatically slow down.
+- 🔴 **CRITICAL FAULT** — Sudden spike detected. Motors halted immediately.
+- ⛔ **MOTORS MANUALLY STOPPED** — User stopped motors via dashboard.
+
+---
+
+### 🧪 Testing Fault Detection
+
+**Test 1 — Fault Detection (Motor Slowdown)**
+Gently press down on the chassis to increase wheel load. Expect: current rise → fault score increase → **FAULT** state → motors slow down.
+
+**Test 2 — Critical Fault (Sudden Spike)**
+Abruptly block both wheels for 1–2 seconds. Expect: sudden spike in current and vibration → **CRITICAL** state → motors stop.
+
+**Test 3 — Manual Stop**
+Click **Stop Motors** on the dashboard during any fault. Expect: motors stop immediately, dashboard shows **MOTORS MANUALLY STOPPED**.
+
+**Test 4 — Recovery**
+Release all load and let the robot run freely. After sustained normal readings, the system transitions back to **NORMAL** state.
+
+---
+
+### 🔧 Troubleshooting
+
+| Problem | Likely Cause | Fix |
+|---|---|---|
+| ESP32 not detected by PC | Missing USB driver | Install CP2102 or CH340 driver |
+| Upload fails | Wrong COM port or board | Recheck Tools → Board and Tools → Port |
+| Upload fails with "Connecting…" stuck | Not entering flash mode | Hold BOOT button during upload start |
+| Wi-Fi not connecting | Wrong credentials | Double-check ssid and password in code |
+| Dashboard not loading | Wrong network or IP | Ensure correct Wi-Fi; recheck IP from Serial Monitor |
+| False faults after warmup | Warmup was disturbed | Reset ESP32 and redo warmup cleanly |
+| No current readings / always 0 | ACS712 wiring issue | Check VCC, GND, and OUT connections |
+| MPU6050 not responding | I2C wiring issue | Verify SDA/SCL pins; run I2C scanner sketch |
+| DHT11 shows -1 or NaN | Bad data pin or no pull-up | Check DATA pin; add 10kΩ pull-up resistor if needed |
+| Motors not moving | L298N not powered or wrong pins | Check motor driver wiring and PWM pin assignments |
+
+---
+
+### 📌 Important Notes & Tips
+
+- 🔁 **Always reset before a new session.** The baseline is session-specific and does not persist after power off.
+- 🔋 **Monitor battery voltage.** A low battery causes inconsistent current readings and false detections.
+- 🌡️ **DHT11 has a 1–2 second response delay.** It is used for long-term trend monitoring only.
+- ⚡ **Never connect the Li-Po battery in reverse polarity.**
+- 🧰 **Verify buck converter output is exactly 5V** with a multimeter before connecting to the ESP32.
+- 💾 **Do not modify the baseline computation** section unless you fully understand the implications.
+
+---
+
 ## 📝 Key Observations
 
 - Sensor values are not stable across sessions
@@ -272,137 +505,9 @@ Integrate a buzzer to provide immediate audible feedback during critical fault c
 
 ## 🔌 Connection Diagram
 
-![Connection Diagram](connection_diagram1.png)
+![Connection Diagram](images/connection_diagram.jpg)
 
 ---
-
-# 🚀 Future Implementations
-
-This document outlines potential improvements and extensions for anyone looking to build upon this project. Each idea is explained with what it does, why it is useful, and how it connects to the existing system.
-
----
-
-## 📋 Table of Contents
-
-1. [Cloud-Based Monitoring & Logging](#1--cloud-based-monitoring--logging)
-2. [Battery Health Monitoring](#2--battery-health-monitoring)
-3. [Buzzer-Based Alert System](#3--buzzer-based-alert-system)
-4. [Mobile App Integration](#4--mobile-app-integration)
-5. [OLED Display on Robot](#5--oled-display-on-robot)
-
----
-
-## 1. ☁️ Cloud-Based Monitoring & Logging
-
-### What it is
-Send all sensor readings and fault events to a cloud platform in real time so they can be accessed from anywhere, not just the local Wi-Fi network.
-
-### Why it is useful
-Currently the dashboard only works when you are on the same Wi-Fi network as the robot. Cloud integration removes this limitation and also stores historical data permanently.
-
-### How to implement
-- Use platforms like **ThingSpeak**, **Firebase**, or **AWS IoT Core**
-- ESP32 sends data via HTTP POST or MQTT protocol to the cloud
-- Build a cloud dashboard using **Grafana** or the platform's built-in visualization tools
-- Set up automated email or SMS alerts when a fault is logged
-
-### Suggested Tools
-`ThingSpeak` `Firebase Realtime Database` `MQTT` `AWS IoT` `Grafana`
-
----
-
-## 2. 🔋 Battery Health Monitoring
-
-### What it is
-Add a dedicated voltage divider circuit or a fuel gauge IC to monitor the Li-Po battery voltage and estimate remaining charge.
-
-### Why it is useful
-A low battery causes the motors to draw inconsistent current, which directly affects baseline accuracy and can trigger false fault detections. Knowing battery level in advance prevents this.
-
-### How to implement
-- Use a simple **voltage divider** (two resistors) connected to an ESP32 ADC pin to read battery voltage
-- Map the voltage to a percentage (e.g. 8.4V = 100%, 6.6V = 0% for a 2S Li-Po)
-- Display battery percentage on the web dashboard
-- Trigger a warning when battery drops below 20%
-- Optionally use the **MAX17043** fuel gauge IC for more accurate readings
-
-### Suggested Tools
-`Voltage Divider Circuit` `MAX17043 IC` `ESP32 ADC`
-
----
-
-## 3. 🔔 Buzzer-Based Alert System
-
-### What it is
-Add a piezo buzzer to the robot that beeps at different patterns based on the fault state.
-
-### Why it is useful
-The web dashboard requires someone to actively be watching it. A buzzer gives immediate physical feedback even when no one is monitoring the screen — especially useful in noisy or remote environments.
-
-### How to implement
-- Connect a piezo buzzer to any available GPIO pin on the ESP32
-- Define beep patterns for each state:
-  - 1 short beep → WARNING
-  - 2 short beeps → FAULT DETECTED
-  - Continuous rapid beeps → CRITICAL FAULT
-- Use `tone()` or PWM to control beep frequency
-
-### Suggested Tools
-`Piezo Buzzer` `ESP32 PWM` `GPIO Output`
-
----
-
-## 4. 📱 Mobile App Integration
-
-### What it is
-Build a dedicated mobile app for Android or iOS that connects to the robot and displays the dashboard instead of using a browser.
-
-### Why it is useful
-A native app provides push notifications, a better mobile UI, and can work even when the browser tab is closed. It also allows background monitoring.
-
-### How to implement
-- Use **MIT App Inventor** for a quick no-code Android app
-- Or build with **Flutter** for a cross-platform (Android + iOS) app
-- Connect the app to the ESP32 using WebSockets or HTTP requests
-- Add push notifications using **Firebase Cloud Messaging (FCM)** when a fault is detected
-
-### Suggested Tools
-`Flutter` `MIT App Inventor` `WebSockets` `Firebase FCM`
-
----
-
-## 5. 🖥️ OLED Display on Robot
-
-### What it is
-Mount a small OLED screen directly on the robot to show live sensor data and fault status without needing to open the dashboard.
-
-### Why it is useful
-Gives instant on-device feedback during testing or demos without needing a phone or laptop. Very useful when debugging in the field.
-
-### How to implement
-- Use a **0.96 inch SSD1306 OLED** module (I2C, same bus as MPU6050)
-- Display current state, fault score, and motor status on screen
-- Scroll through sensor values every few seconds
-- Show a simple icon or symbol for each fault type
-
-### Suggested Tools
-`SSD1306 OLED` `Adafruit SSD1306 Library` `I2C`
-
----
-
----
-
-## 🤝 Contributing
-
-If you have implemented any of the above or have a new idea entirely, feel free to:
-
-1. Fork this repository
-2. Create a new branch (`git checkout -b feature/your-feature-name`)
-3. Make your changes and commit (`git commit -m "Add: your feature description"`)
-4. Push to your branch (`git push origin feature/your-feature-name`)
-5. Open a **Pull Request** with a clear description of what you added
-
-> 💡 Even partial implementations or proof-of-concept additions are welcome. Open an Issue first if you want to discuss an idea before building it.
 
 ## 🏁 Conclusion
 
