@@ -150,7 +150,7 @@ A fault is only confirmed if abnormal readings **persist across multiple cycles*
 
 # 🚨 Real-Time Fault Detection Demonstrations
 ## 📳 Vibration Fault Detection
-![gif1](images/Jerking.gif.mp4)
+![gif1](images/Jerking.gif)
 
 ## ⚡️ Multi-Sensor Fault Detection
 ![gif2](images/Multisensor.gif.mp4)
